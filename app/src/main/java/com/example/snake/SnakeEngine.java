@@ -156,19 +156,34 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         if (bobIndex == -1) {
             bobs[0] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
             bobs[1] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
+            while (bobs[1].x == bobs[0].x && bobs[1].y == bobs[0].y) {
+                bobs[1] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
+            }
+
             bobs[2] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
+            while ((bobs[2].x == bobs[0].x && bobs[2].y == bobs[0].y) || (bobs[2].x == bobs[1].x && bobs[2].y == bobs[1].y))
+            {
+                bobs[2] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
+            }
+
         }
         else
         {
-            bobs[bobIndex] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
+            Bob tmp = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
+            while ((tmp.x == bobs[0].x && tmp.y == bobs[0].y) || (tmp.x == bobs[1].x && tmp.y == bobs[1].y)  || (tmp.x == bobs[2].x && tmp.y == bobs[2].y))
+            {
+                tmp = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
+            }
+
+            bobs[bobIndex] = tmp;
         }
     }
 
     private void eatBob(Bob b, int bobIndex){
         //  Got him!
         // Increase the size of the snake
-        snakeLength += b.power;
-        score = score + b.power;
+        snakeLength += b.power * 2;
+        score += b.power * 2;
         if (score > highscore) {highscore = score;}
 
         //replace Bob
@@ -302,8 +317,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         if (detectDeath()) {
             //start again
             soundPool.play(snake_crash, 1, 1, 0, 0, 1);
-
-            ((SnakeActivity)context).finish();
+            newGame();
+            //((SnakeActivity)context).finish();
         }
     }
     public void draw() {
