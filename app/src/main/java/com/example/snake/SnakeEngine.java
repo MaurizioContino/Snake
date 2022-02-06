@@ -343,6 +343,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
                         paint);
 
             }
+            // ciao
             for (int i = 0; i < snakeLength; i++) {
                 paint.setColor(Color.argb(255, 100,0,0));
                 canvas.drawCircle(
