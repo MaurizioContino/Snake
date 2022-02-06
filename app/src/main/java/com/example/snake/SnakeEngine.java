@@ -124,10 +124,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
         o2.inSampleSize=1;
 
-        oroBob = BitmapFactory.decodeResource(getResources(), R.drawable.bob_oro, o2);
-        argentoBob = BitmapFactory.decodeResource(getResources(), R.drawable.bob_argento, o2);
-        bronzoBob = BitmapFactory.decodeResource(getResources(), R.drawable.bob_bronzo, o2);
-        snakepic =  BitmapFactory.decodeResource(getResources(), R.drawable.snake, o2);
+
         // Initialize the drawing objects
         surfaceHolder = getHolder();
         paint = new Paint();
@@ -325,27 +322,39 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             canvas.drawText("High Score:" + highscore, 400, 70, paint);
 
             // Draw the snake one block at a time
-            for (int i = 0; i < snakeLength; i++) {
-
-                canvas.drawRect(snakeXs[i] * blockSize,
-                        (snakeYs[i] * blockSize),
-                        (snakeXs[i] * blockSize) + blockSize,
-                        (snakeYs[i] * blockSize) + blockSize,
-                        paint);
-
-                //canvas.drawBitmap(snakepic, snakeXs[i] * blockSize,snakeXs[i] * blockSize, paint);
-            }
 
             // Set the color of the paint to draw Bob red
 
 
             // Draw Bob
             for (Bob bob : bobs) {
+                paint.setColor(Color.argb(255, 10, 10, 10));
+                canvas.drawCircle(
+                        bob.x * blockSize + (blockSize/2)
+                        bob.y * blockSize + (blockSize/2),
+                        blockSize /2,
+                        paint);
                 paint.setColor(Color.argb(255, bob.r, bob.g, bob.b));
-                canvas.drawRect(bob.x * blockSize,
-                        (bob.y * blockSize),
-                        (bob.x * blockSize) + blockSize,
-                        (bob.y * blockSize) + blockSize,
+                canvas.drawCircle(
+                        bob.x * blockSize + (blockSize/2)
+                        bob.y * blockSize + (blockSize/2),
+                        blockSize /4,
+                        paint);
+
+            }
+            for (int i = 0; i < snakeLength; i++) {
+                paint.setColor(Color.argb(255, 100,0,0));
+                canvas.drawCircle(
+                        snakeXs.x * blockSize + (blockSize/2)
+                        snakeYs.y * blockSize + (blockSize/2),
+                        blockSize /2,
+                        paint);
+                paint.setColor(Color.argb(255, 255,0,0));
+
+                canvas.drawCircle(
+                        bob.x * blockSize + (blockSize/2)
+                        bob.y * blockSize + (blockSize/2),
+                        blockSize /4,
                         paint);
 
             }
