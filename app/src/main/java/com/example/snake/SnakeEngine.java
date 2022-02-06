@@ -1,6 +1,7 @@
 package com.example.snake;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -302,7 +303,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             //start again
             soundPool.play(snake_crash, 1, 1, 0, 0, 1);
 
-            newGame();
+            ((SnakeActivity)context).finish();
         }
     }
     public void draw() {
@@ -330,14 +331,14 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             for (Bob bob : bobs) {
                 paint.setColor(Color.argb(255, 10, 10, 10));
                 canvas.drawCircle(
-                        bob.x * blockSize + (blockSize/2)
-                        bob.y * blockSize + (blockSize/2),
+                        (bob.x * blockSize) + (blockSize/2),
+                        (bob.y * blockSize) + (blockSize/2),
                         blockSize /2,
                         paint);
                 paint.setColor(Color.argb(255, bob.r, bob.g, bob.b));
                 canvas.drawCircle(
-                        bob.x * blockSize + (blockSize/2)
-                        bob.y * blockSize + (blockSize/2),
+                        (bob.x * blockSize) + (blockSize/2),
+                        (bob.y * blockSize) + (blockSize/2),
                         blockSize /4,
                         paint);
 
@@ -345,15 +346,15 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             for (int i = 0; i < snakeLength; i++) {
                 paint.setColor(Color.argb(255, 100,0,0));
                 canvas.drawCircle(
-                        snakeXs.x * blockSize + (blockSize/2)
-                        snakeYs.y * blockSize + (blockSize/2),
+                        (snakeXs[i] * blockSize) + (blockSize/2),
+                        snakeYs[i] * blockSize + (blockSize/2),
                         blockSize /2,
                         paint);
                 paint.setColor(Color.argb(255, 255,0,0));
 
                 canvas.drawCircle(
-                        bob.x * blockSize + (blockSize/2)
-                        bob.y * blockSize + (blockSize/2),
+                        (snakeXs[i] * blockSize) + (blockSize/2),
+                        (snakeYs[i] * blockSize) + (blockSize/2),
                         blockSize /4,
                         paint);
 
