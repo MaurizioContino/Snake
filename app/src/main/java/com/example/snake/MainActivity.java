@@ -8,14 +8,22 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
+    Intent intentPlay;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
     }
 
     public void StartPlay(View view) {
-        Intent intent = new Intent(this, SnakeActivity.class);
-        startActivity(intent);
+        intentPlay = new Intent(this, SnakeActivity.class);
+        startActivity(intentPlay);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 }

@@ -1,7 +1,6 @@
 package com.example.snake;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,6 +26,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
     // To hold a reference to the Activity
     private Context context;
+    private SnakeActivity activity;
 
     // for plaing sound effects
     private SoundPool soundPool;
@@ -65,8 +65,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 // We will draw the frame much more often
 
     // How many points does the player have
-    private int score;
-    private int highscore = 0;
+    public int score;
+    public int highscore = 0;
 
     // The location in the grid of all the segments
     private int[] snakeXs;
@@ -85,17 +85,11 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     // Some paint for our canvas
     private Paint paint;
 
-    Bitmap oroBob ;
-    Bitmap argentoBob ;
-    Bitmap bronzoBob ;
-    Bitmap snakepic ;
-
-
     public SnakeEngine(Context context, Point size) {
         super(context);
 
         context = context;
-
+        activity = (SnakeActivity)context;
         screenX = size.x;
         screenY = size.y;
 
@@ -103,25 +97,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         blockSize = screenX / NUM_BLOCKS_WIDE;
         // How many blocks of the same size will fit into the height
         numBlocksHigh = (screenY / blockSize) - 5;
-
-        // Set the sound up
-        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
-        try {
-            // Create objects of the 2 required classes
-            // Use m_Context because this is a reference to the Activity
-            AssetManager assetManager = context.getAssets();
-            AssetFileDescriptor descriptor;
-
-            // Prepare the two sounds in memory
-            descriptor = assetManager.openFd("get_mouse_sound.ogg");
-            eat_bob = soundPool.load(descriptor, 0);
-
-            descriptor = assetManager.openFd("death_sound.ogg");
-            snake_crash = soundPool.load(descriptor, 0);
-
-        } catch (IOException e) {
-            // Error
-        }
 
         // Initialize the drawing objects
         surfaceHolder = getHolder();
@@ -132,6 +107,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         // Start the game
         newGame();
     }
+
     public void newGame() {
         // Start with a single snake segment
 
@@ -150,34 +126,18 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         // Setup nextFrameTime so an update is triggered
         nextFrameTime = System.currentTimeMillis();
     }
+
     public void spawnBobs(int bobIndex) {
         if (bobIndex == -1) {
             for(int i=0;i<maxbobs;i++)
             {
                 bobs[i] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
             }
-            /*
-            bobs[1] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
-            while (bobs[1].x == bobs[0].x && bobs[1].y == bobs[0].y) {
-                bobs[1] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
-            }
 
-            bobs[2] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
-            while ((bobs[2].x == bobs[0].x && bobs[2].y == bobs[0].y) || (bobs[2].x == bobs[1].x && bobs[2].y == bobs[1].y))
-            {
-                bobs[2] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
-            }
-*/
         }
         else
         {
-            /*
-            Bob tmp = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
-            while ((tmp.x == bobs[0].x && tmp.y == bobs[0].y) || (tmp.x == bobs[1].x && tmp.y == bobs[1].y)  || (tmp.x == bobs[2].x && tmp.y == bobs[2].y))
-            {
-                tmp = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
-            }
-*/
+
             bobs[bobIndex] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
             bobs[maxbobs-1] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
         }
@@ -197,6 +157,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
         soundPool.play(eat_bob, 1, 1, 0, 0, 1);
     }
+
     public boolean updateRequired() {
 
         // Are we due to update the frame
@@ -213,6 +174,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
         return false;
     }
+
     private void moveSnake(){
         // Move the body
         for (int i = snakeLength; i > 0; i--) {
@@ -244,6 +206,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
                 break;
         }
     }
+
     private boolean detectDeath(){
         // Has the snake died?
         boolean dead = false;
@@ -320,9 +283,10 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
         if (detectDeath()) {
             //start again
-            soundPool.play(snake_crash, 1, 1, 0, 0, 1);
-            newGame();
-            //((SnakeActivity)context).finish();
+            //soundPool.play(snake_crash, 1, 1, 0, 0, 1);
+            //pause();
+            activity.finish();
+
         }
     }
 
@@ -386,27 +350,21 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             surfaceHolder.unlockCanvasAndPost(canvas);
         }
     }
+
     @Override
     public void run() {
-
         while (isPlaying) {
-
             // Update 10 times a second
             if(updateRequired()) {
                 update();
                 draw();
             }
-
         }
     }
 
     public void pause() {
         isPlaying = false;
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            // Error
-        }
+        if (this.thread!=null) this.thread.interrupt();
     }
 
     public void resume() {
