@@ -12,20 +12,20 @@ public class Bob {
 
     public Bob(int width, int height){
         Random random = new Random();
-        x = random.nextInt(width - 10);
-        if (x < 10) x = 10;
-        y = random.nextInt(height - 10);
-        if (y < 10) y = 10;
+        x = random.nextInt(width -1) + 1;
+        if (x < 1) x = 1;
+        y = random.nextInt(height - 1) + 1;
+        if (y < 1) y = 1;
         power = random.nextInt(3) + 1;
 
         if (power == 1) {
-            r = 255;
-            g = 0;
+            r = 0;
+            g = 255;
             b = 0;
         }
         if (power == 2) {
-            r = 0;
-            g = 255;
+            r = 255;
+            g = 0;
             b = 0;
         }
         if (power == 3) {
@@ -34,4 +34,5 @@ public class Bob {
             b = 255;
         }
     }
+
 }

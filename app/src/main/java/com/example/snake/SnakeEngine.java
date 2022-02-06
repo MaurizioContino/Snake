@@ -46,7 +46,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private int snakeLength;
 
     // Where is Bob hiding?
-     private Bob[] bobs = new Bob[3];
+     private Bob[] bobs = new Bob[20];
+     private int maxbobs = 3;
 
     // The size in pixels of a snake segment
     private int blockSize;
@@ -101,7 +102,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         // Work out how many pixels each block is
         blockSize = screenX / NUM_BLOCKS_WIDE;
         // How many blocks of the same size will fit into the height
-        numBlocksHigh = screenY / blockSize;
+        numBlocksHigh = (screenY / blockSize) - 5;
 
         // Set the sound up
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
@@ -121,28 +122,25 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         } catch (IOException e) {
             // Error
         }
-        BitmapFactory.Options o2 = new BitmapFactory.Options();
-
-        o2.inSampleSize=1;
-
 
         // Initialize the drawing objects
         surfaceHolder = getHolder();
         paint = new Paint();
 
-        // If you score 200 you are rewarded with a crash achievement!
-        snakeXs = new int[200];
-        snakeYs = new int[200];
+
 
         // Start the game
         newGame();
     }
     public void newGame() {
         // Start with a single snake segment
+
+        snakeXs = new int[200];
+        snakeYs = new int[200];
         snakeLength = 1;
+        maxbobs = 3;
         snakeXs[0] = NUM_BLOCKS_WIDE / 2;
         snakeYs[0] = numBlocksHigh / 2;
-
         // Get Bob ready for dinner
         spawnBobs(-1);
 
@@ -154,7 +152,11 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     }
     public void spawnBobs(int bobIndex) {
         if (bobIndex == -1) {
-            bobs[0] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
+            for(int i=0;i<maxbobs;i++)
+            {
+                bobs[i] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
+            }
+            /*
             bobs[1] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
             while (bobs[1].x == bobs[0].x && bobs[1].y == bobs[0].y) {
                 bobs[1] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
@@ -165,27 +167,29 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             {
                 bobs[2] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
             }
-
+*/
         }
         else
         {
+            /*
             Bob tmp = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
             while ((tmp.x == bobs[0].x && tmp.y == bobs[0].y) || (tmp.x == bobs[1].x && tmp.y == bobs[1].y)  || (tmp.x == bobs[2].x && tmp.y == bobs[2].y))
             {
                 tmp = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
             }
-
-            bobs[bobIndex] = tmp;
+*/
+            bobs[bobIndex] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
+            bobs[maxbobs-1] = new Bob(NUM_BLOCKS_WIDE, numBlocksHigh);
         }
     }
 
     private void eatBob(Bob b, int bobIndex){
         //  Got him!
         // Increase the size of the snake
-        snakeLength += b.power * 2;
-        score += b.power * 2;
+        snakeLength += b.power*2;
+        score += b.power*2;
         if (score > highscore) {highscore = score;}
-
+        if (maxbobs < 20) maxbobs++;
         //replace Bob
         // This reminds me of Edge of Tomorrow. Oneday Bob will be ready!
         spawnBobs(bobIndex);
@@ -303,10 +307,10 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     public void update() {
         // Did the head of the snake eat Bob?
         int idx = -1;
-        for (Bob bob : bobs) {
+        for (int i=0; i<maxbobs; i++) {
             idx++;
-            if (snakeXs[0] == bob.x && snakeYs[0] == bob.y) {
-                eatBob(bob, idx);
+            if (snakeXs[0] ==  bobs[i].x && snakeYs[0] == bobs[i].y) {
+                eatBob(bobs[i], idx);
                 break;
             }
         }
@@ -321,6 +325,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             //((SnakeActivity)context).finish();
         }
     }
+
     public void draw() {
         // Get a lock on the canvas
         if (surfaceHolder.getSurface().isValid()) {
@@ -343,30 +348,30 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
 
             // Draw Bob
-            for (Bob bob : bobs) {
-                paint.setColor(Color.argb(255, 10, 10, 10));
+            for (int i = 0; i< maxbobs; i++) {
+                paint.setColor(Color.argb(100, bobs[i].r, bobs[i].g, bobs[i].b));
                 canvas.drawCircle(
-                        (bob.x * blockSize) + (blockSize/2),
-                        (bob.y * blockSize) + (blockSize/2),
-                        blockSize /2,
+                        (bobs[i].x * blockSize) + (blockSize/2),
+                        (bobs[i].y * blockSize) + (blockSize/2),
+                        blockSize / 2,
                         paint);
-                paint.setColor(Color.argb(255, bob.r, bob.g, bob.b));
+                paint.setColor(Color.argb(255, bobs[i].r, bobs[i].g, bobs[i].b));
                 canvas.drawCircle(
-                        (bob.x * blockSize) + (blockSize/2),
-                        (bob.y * blockSize) + (blockSize/2),
-                        blockSize /4,
+                        (bobs[i].x * blockSize) + (blockSize/2),
+                        (bobs[i].y * blockSize) + (blockSize/2),
+                        blockSize  / 4,
                         paint);
 
             }
-            // ciao
+            // disegna snake
             for (int i = 0; i < snakeLength; i++) {
-                paint.setColor(Color.argb(255, 100,0,0));
+                paint.setColor(Color.argb(255, 0,100,0));
                 canvas.drawCircle(
                         (snakeXs[i] * blockSize) + (blockSize/2),
                         snakeYs[i] * blockSize + (blockSize/2),
                         blockSize /2,
                         paint);
-                paint.setColor(Color.argb(255, 255,0,0));
+                paint.setColor(Color.argb(255, 0,255,0));
 
                 canvas.drawCircle(
                         (snakeXs[i] * blockSize) + (blockSize/2),
