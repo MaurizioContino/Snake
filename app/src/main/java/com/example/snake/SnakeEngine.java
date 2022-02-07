@@ -286,7 +286,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             //pause();
             activity.SaveHighScore(highscore);
             activity.finish();
-
+            if (this.thread!=null) this.thread.interrupt();
         }
     }
 
