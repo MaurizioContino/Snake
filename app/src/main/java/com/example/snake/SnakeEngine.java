@@ -155,7 +155,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         spawnBobs(bobIndex);
         //add to the score
 
-        soundPool.play(eat_bob, 1, 1, 0, 0, 1);
     }
 
     public boolean updateRequired() {
