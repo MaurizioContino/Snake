@@ -284,6 +284,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             //start again
             //soundPool.play(snake_crash, 1, 1, 0, 0, 1);
             //pause();
+            activity.SaveHighScore(highscore);
             activity.finish();
 
         }
@@ -352,6 +353,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
     @Override
     public void run() {
+
         while (isPlaying) {
             // Update 10 times a second
             if(updateRequired()) {

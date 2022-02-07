@@ -2,7 +2,9 @@ package com.example.snake;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
@@ -23,10 +25,21 @@ public class SnakeActivity extends AppCompatActivity {
         intentMain = new Intent(this, MainActivity.class);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        snakeEngine.resume();
+        @Override
+        protected void onStart() {
+            super.onStart();
+            SharedPreferences prefs = this.getSharedPreferences("myPrefsKey", Context.MODE_PRIVATE);
+            snakeEngine.highscore = prefs.getInt("hightScore", 0); //0 is the default value
+
+
+            snakeEngine.resume();
+        }
+
+    public void SaveHighScore(int score) {
+        SharedPreferences prefs = this.getSharedPreferences("myPrefsKey", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("hightScore", score);
+        editor.commit();
     }
 
     @Override
