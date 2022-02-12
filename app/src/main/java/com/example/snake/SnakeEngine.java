@@ -59,7 +59,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     // Control pausing between updates
     private long nextFrameTime;
     // Update the game 10 times per second
-    private final long FPS = 12;
+    private final long FPS = 3;
     // There are 1000 milliseconds in a second
     private final long MILLIS_PER_SECOND = 1000;
 // We will draw the frame much more often
@@ -84,14 +84,16 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
     // Some paint for our canvas
     private Paint paint;
+    int MarginTop = 100;
+    int Margin = 60;
 
     public SnakeEngine(Context context, Point size) {
         super(context);
 
         context = context;
         activity = (SnakeActivity)context;
-        screenX = size.x;
-        screenY = size.y;
+        screenX = size.x - (Margin * 2);
+        screenY = size.y - (Margin * 2) - MarginTop;
 
         // Work out how many pixels each block is
         blockSize = screenX / NUM_BLOCKS_WIDE;
@@ -212,9 +214,9 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
         // Hit the screen edge
         if (snakeXs[0] == -1) dead = true;
-        if (snakeXs[0] >= NUM_BLOCKS_WIDE) dead = true;
-        if (snakeYs[0] == -1) dead = true;
-        if (snakeYs[0] == numBlocksHigh) dead = true;
+        if (snakeXs[0] > NUM_BLOCKS_WIDE) dead = true;
+        if (snakeYs[0] == 2) dead = true;
+        if (snakeYs[0] > numBlocksHigh +1) dead = true;
 
         // Eaten itself?
         for (int i = snakeLength - 1; i > 0; i--) {
@@ -310,19 +312,43 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
             // Set the color of the paint to draw Bob red
 
+            canvas.drawRect(
+                    0,
+                    MarginTop,
+                    NUM_BLOCKS_WIDE * blockSize + (Margin * 2),
+                    blockSize + MarginTop + 10, paint); // + 10 è un aggiustamento guardando il risultato
+
+            canvas.drawRect(
+                    0,
+                    (numBlocksHigh * blockSize) + blockSize + (MarginTop) - 20,
+                    NUM_BLOCKS_WIDE * blockSize + (Margin * 2),
+                    (numBlocksHigh * blockSize) + blockSize + Margin + MarginTop, paint);
+
+            canvas.drawRect(
+                    0,
+                    MarginTop,
+                    Margin / 2 ,
+                    (numBlocksHigh * blockSize) + (blockSize * 2) + Margin, paint);
+
+
+            canvas.drawRect(
+                    (NUM_BLOCKS_WIDE * blockSize) + blockSize + (Margin / 2) ,
+                    MarginTop,
+                    NUM_BLOCKS_WIDE * blockSize + (Margin * 2) ,
+                    (numBlocksHigh * blockSize) + (blockSize * 2) + Margin, paint);
 
             // Draw Bob
             for (int i = 0; i< maxbobs; i++) {
                 paint.setColor(Color.argb(100, bobs[i].r, bobs[i].g, bobs[i].b));
                 canvas.drawCircle(
-                        (bobs[i].x * blockSize) + (blockSize/2),
-                        (bobs[i].y * blockSize) + (blockSize/2),
+                        (bobs[i].x * blockSize) + (blockSize/2) + (Margin / 2),
+                        (bobs[i].y * blockSize) + (blockSize/2) +  (Margin / 2),
                         blockSize / 2,
                         paint);
                 paint.setColor(Color.argb(255, bobs[i].r, bobs[i].g, bobs[i].b));
                 canvas.drawCircle(
-                        (bobs[i].x * blockSize) + (blockSize/2),
-                        (bobs[i].y * blockSize) + (blockSize/2),
+                        (bobs[i].x * blockSize) + (blockSize/2) +  (Margin / 2),
+                        (bobs[i].y * blockSize) + (blockSize/2) +  (Margin / 2),
                         blockSize  / 4,
                         paint);
 
@@ -331,15 +357,15 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             for (int i = 0; i < snakeLength; i++) {
                 paint.setColor(Color.argb(255, 0,100,0));
                 canvas.drawCircle(
-                        (snakeXs[i] * blockSize) + (blockSize/2),
-                        snakeYs[i] * blockSize + (blockSize/2),
+                        (snakeXs[i] * blockSize) + (blockSize/2) +  (Margin / 2),
+                        snakeYs[i] * blockSize + (blockSize/2) +  (Margin / 2),
                         blockSize /2,
                         paint);
                 paint.setColor(Color.argb(255, 0,255,0));
 
                 canvas.drawCircle(
-                        (snakeXs[i] * blockSize) + (blockSize/2),
-                        (snakeYs[i] * blockSize) + (blockSize/2),
+                        (snakeXs[i] * blockSize) + (blockSize/2) +  (Margin / 2),
+                        (snakeYs[i] * blockSize) + (blockSize/2) +  (Margin / 2),
                         blockSize /4,
                         paint);
 
