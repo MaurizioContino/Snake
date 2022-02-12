@@ -12,11 +12,20 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Random;
 import android.content.res.AssetManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 
 public class SnakeEngine extends SurfaceView implements Runnable {
 
@@ -59,7 +68,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     // Control pausing between updates
     private long nextFrameTime;
     // Update the game 10 times per second
-    private final long FPS = 10;
+    private final long FPS = 12;
     // There are 1000 milliseconds in a second
     private final long MILLIS_PER_SECOND = 1000;
 // We will draw the frame much more often
@@ -84,16 +93,16 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
     // Some paint for our canvas
     private Paint paint;
-    int MarginTop = 100;
-    int Margin = 60;
+
+    private List<WallItem> walls = new ArrayList<WallItem>();
 
     public SnakeEngine(Context context, Point size) {
         super(context);
 
         context = context;
         activity = (SnakeActivity)context;
-        screenX = size.x - (Margin * 2);
-        screenY = size.y - (Margin * 2) - MarginTop;
+        screenX = size.x;
+        screenY = size.y;
 
         // Work out how many pixels each block is
         blockSize = screenX / NUM_BLOCKS_WIDE;
@@ -118,7 +127,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         snakeLength = 1;
         maxbobs = 3;
         snakeXs[0] = NUM_BLOCKS_WIDE / 2;
-        snakeYs[0] = numBlocksHigh / 2;
+        snakeYs[0] = numBlocksHigh / 4;
+        WallLevel1();
         // Get Bob ready for dinner
         spawnBobs(-1);
 
@@ -213,10 +223,17 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         boolean dead = false;
 
         // Hit the screen edge
+        /*
         if (snakeXs[0] == -1) dead = true;
-        if (snakeXs[0] > NUM_BLOCKS_WIDE) dead = true;
-        if (snakeYs[0] == 2) dead = true;
-        if (snakeYs[0] > numBlocksHigh +1) dead = true;
+        if (snakeXs[0] >= NUM_BLOCKS_WIDE) dead = true;
+        if (snakeYs[0] == -1) dead = true;
+        if (snakeYs[0] == numBlocksHigh) dead = true;
+*/
+
+        for (WallItem w : walls)
+        {
+            if (w.x == snakeXs[0] && w.y == snakeYs[0]) dead = true ;
+        }
 
         // Eaten itself?
         for (int i = snakeLength - 1; i > 0; i--) {
@@ -312,20 +329,19 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
             // Set the color of the paint to draw Bob red
 
-            DrawBorders();
 
             // Draw Bob
             for (int i = 0; i< maxbobs; i++) {
                 paint.setColor(Color.argb(100, bobs[i].r, bobs[i].g, bobs[i].b));
                 canvas.drawCircle(
-                        (bobs[i].x * blockSize) + (blockSize/2) + (Margin / 2),
-                        (bobs[i].y * blockSize) + (blockSize/2) +  (Margin / 2),
+                        (bobs[i].x * blockSize) + (blockSize/2),
+                        (bobs[i].y * blockSize) + (blockSize/2),
                         blockSize / 2,
                         paint);
                 paint.setColor(Color.argb(255, bobs[i].r, bobs[i].g, bobs[i].b));
                 canvas.drawCircle(
-                        (bobs[i].x * blockSize) + (blockSize/2) +  (Margin / 2),
-                        (bobs[i].y * blockSize) + (blockSize/2) +  (Margin / 2),
+                        (bobs[i].x * blockSize) + (blockSize/2),
+                        (bobs[i].y * blockSize) + (blockSize/2),
                         blockSize  / 4,
                         paint);
 
@@ -334,51 +350,34 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             for (int i = 0; i < snakeLength; i++) {
                 paint.setColor(Color.argb(255, 0,100,0));
                 canvas.drawCircle(
-                        (snakeXs[i] * blockSize) + (blockSize/2) +  (Margin / 2),
-                        snakeYs[i] * blockSize + (blockSize/2) +  (Margin / 2),
+                        (snakeXs[i] * blockSize) + (blockSize/2),
+                        snakeYs[i] * blockSize + (blockSize/2),
                         blockSize /2,
                         paint);
                 paint.setColor(Color.argb(255, 0,255,0));
 
                 canvas.drawCircle(
-                        (snakeXs[i] * blockSize) + (blockSize/2) +  (Margin / 2),
-                        (snakeYs[i] * blockSize) + (blockSize/2) +  (Margin / 2),
+                        (snakeXs[i] * blockSize) + (blockSize/2),
+                        (snakeYs[i] * blockSize) + (blockSize/2),
                         blockSize /4,
                         paint);
 
+            }
+            paint.setColor(Color.argb(255, 0,255,0));
+
+            for (WallItem w : walls) {
+                canvas.drawRect(
+                        w.x * blockSize,
+                        w.y * blockSize,
+                        w.x * blockSize + (blockSize),
+                        w.y * blockSize + ( blockSize),
+                        paint);
             }
 
 
             // Unlock the canvas and reveal the graphics for this frame
             surfaceHolder.unlockCanvasAndPost(canvas);
         }
-    }
-
-    private void DrawBorders() {
-        canvas.drawRect(
-                0,
-                MarginTop,
-                NUM_BLOCKS_WIDE * blockSize + (Margin * 2),
-                blockSize + MarginTop + 10, paint); // + 10 è un aggiustamento guardando il risultato
-
-        canvas.drawRect(
-                0,
-                (numBlocksHigh * blockSize) + blockSize + (MarginTop) - 20,
-                NUM_BLOCKS_WIDE * blockSize + (Margin * 2),
-                (numBlocksHigh * blockSize) + blockSize + Margin + MarginTop, paint);
-
-        canvas.drawRect(
-                0,
-                MarginTop,
-                Margin / 2 ,
-                (numBlocksHigh * blockSize) + (blockSize * 2) + Margin, paint);
-
-
-        canvas.drawRect(
-                (NUM_BLOCKS_WIDE * blockSize) + blockSize + (Margin / 2) ,
-                MarginTop,
-                NUM_BLOCKS_WIDE * blockSize + (Margin * 2) ,
-                (numBlocksHigh * blockSize) + (blockSize * 2) + Margin, paint);
     }
 
     @Override
@@ -403,4 +402,31 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         thread = new Thread(this);
         thread.start();
     }
+
+    void WallLevel1() {
+        walls.clear();
+        for(int x = 0; x < NUM_BLOCKS_WIDE; x++)
+        {
+            walls.add(new WallItem(x,0,1,1));
+            walls.add(new WallItem(x,numBlocksHigh - 1,1,1));
+        }
+        for(int y = 0; y < numBlocksHigh; y++)
+        {
+            walls.add(new WallItem(0,y,1,1));
+            walls.add(new WallItem(NUM_BLOCKS_WIDE - 1,y,1,1));
+        }
+
+        for(int x = 0; x < (NUM_BLOCKS_WIDE / 2) - 2 ; x++)
+        {
+
+            walls.add(new WallItem(x,numBlocksHigh / 2 - 1,1,1));
+        }
+        for(int x = (NUM_BLOCKS_WIDE / 2) + 4; x < NUM_BLOCKS_WIDE ; x++)
+        {
+
+            walls.add(new WallItem(x,numBlocksHigh / 2 - 1,1,1));
+        }
+    }
+
+
 }
