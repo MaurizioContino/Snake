@@ -322,8 +322,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
             // Scale the HUD text
             paint.setTextSize(45);
-            canvas.drawText("Score:" + score, 10, 70, paint);
-            canvas.drawText("High Score:" + highscore, 400, 70, paint);
+            canvas.drawText("Score:" + score, 100, 270, paint);
+            canvas.drawText("High Score:" + highscore, 500, 270, paint);
 
             // Draw the snake one block at a time
 
@@ -407,24 +407,24 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         walls.clear();
         for(int x = 0; x < NUM_BLOCKS_WIDE; x++)
         {
-            walls.add(new WallItem(x,0,1,1));
-            walls.add(new WallItem(x,numBlocksHigh - 1,1,1));
+            walls.add(new WallItem(x,0));
+            walls.add(new WallItem(x,numBlocksHigh - 1));
         }
         for(int y = 0; y < numBlocksHigh; y++)
         {
-            walls.add(new WallItem(0,y,1,1));
-            walls.add(new WallItem(NUM_BLOCKS_WIDE - 1,y,1,1));
+            walls.add(new WallItem(0,y));
+            walls.add(new WallItem(NUM_BLOCKS_WIDE - 1,y));
         }
 
         for(int x = 0; x < (NUM_BLOCKS_WIDE / 2) - 2 ; x++)
         {
 
-            walls.add(new WallItem(x,numBlocksHigh / 2 - 1,1,1));
+            walls.add(new WallItem(x,numBlocksHigh / 2 - 1));
         }
         for(int x = (NUM_BLOCKS_WIDE / 2) + 4; x < NUM_BLOCKS_WIDE ; x++)
         {
 
-            walls.add(new WallItem(x,numBlocksHigh / 2 - 1,1,1));
+            walls.add(new WallItem(x,numBlocksHigh / 2 - 1));
         }
     }
 
