@@ -59,7 +59,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     // Control pausing between updates
     private long nextFrameTime;
     // Update the game 10 times per second
-    private final long FPS = 3;
+    private final long FPS = 10;
     // There are 1000 milliseconds in a second
     private final long MILLIS_PER_SECOND = 1000;
 // We will draw the frame much more often
@@ -312,30 +312,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
             // Set the color of the paint to draw Bob red
 
-            canvas.drawRect(
-                    0,
-                    MarginTop,
-                    NUM_BLOCKS_WIDE * blockSize + (Margin * 2),
-                    blockSize + MarginTop + 10, paint); // + 10 è un aggiustamento guardando il risultato
-
-            canvas.drawRect(
-                    0,
-                    (numBlocksHigh * blockSize) + blockSize + (MarginTop) - 20,
-                    NUM_BLOCKS_WIDE * blockSize + (Margin * 2),
-                    (numBlocksHigh * blockSize) + blockSize + Margin + MarginTop, paint);
-
-            canvas.drawRect(
-                    0,
-                    MarginTop,
-                    Margin / 2 ,
-                    (numBlocksHigh * blockSize) + (blockSize * 2) + Margin, paint);
-
-
-            canvas.drawRect(
-                    (NUM_BLOCKS_WIDE * blockSize) + blockSize + (Margin / 2) ,
-                    MarginTop,
-                    NUM_BLOCKS_WIDE * blockSize + (Margin * 2) ,
-                    (numBlocksHigh * blockSize) + (blockSize * 2) + Margin, paint);
+            DrawBorders();
 
             // Draw Bob
             for (int i = 0; i< maxbobs; i++) {
@@ -375,6 +352,33 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             // Unlock the canvas and reveal the graphics for this frame
             surfaceHolder.unlockCanvasAndPost(canvas);
         }
+    }
+
+    private void DrawBorders() {
+        canvas.drawRect(
+                0,
+                MarginTop,
+                NUM_BLOCKS_WIDE * blockSize + (Margin * 2),
+                blockSize + MarginTop + 10, paint); // + 10 è un aggiustamento guardando il risultato
+
+        canvas.drawRect(
+                0,
+                (numBlocksHigh * blockSize) + blockSize + (MarginTop) - 20,
+                NUM_BLOCKS_WIDE * blockSize + (Margin * 2),
+                (numBlocksHigh * blockSize) + blockSize + Margin + MarginTop, paint);
+
+        canvas.drawRect(
+                0,
+                MarginTop,
+                Margin / 2 ,
+                (numBlocksHigh * blockSize) + (blockSize * 2) + Margin, paint);
+
+
+        canvas.drawRect(
+                (NUM_BLOCKS_WIDE * blockSize) + blockSize + (Margin / 2) ,
+                MarginTop,
+                NUM_BLOCKS_WIDE * blockSize + (Margin * 2) ,
+                (numBlocksHigh * blockSize) + (blockSize * 2) + Margin, paint);
     }
 
     @Override
